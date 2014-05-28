@@ -6,7 +6,7 @@ class Group(val id: Int, group: Seq[Set[Char]]) {
   def append(char: Set[Char]): Group = new Group(id, group :+ char)
   def toNode: Node = {
     group.map{LiteralNode(_)}.foldRight(NilNode.asInstanceOf[Node]) {
-      case (head: Node, tail:Node) => head then tail
+      case (head: Node, tail:Node) => head setNext tail
     }
   }
 }
@@ -20,15 +20,15 @@ trait Node {
     accept(s, Seq(), Map())
   }
   def accept(s: Seq[Set[Char]], openGroups: Seq[Group], closedGroupMatchers: Map[Int, Node]): Boolean
-  def then(next: Node): Node
+  def setNext(next: Node): Node
   def append(tail: Node): Node
-  def ::(prev: Node): Node = prev then this
+  def ::(prev: Node): Node = prev setNext this
   def or(other: Node): OrNode = new OrNode(Seq(this, other), NilNode)
 }
 
 object NilNode extends Node {
   def accept(s: Seq[Set[Char]], openGroups: Seq[Group], closedGroups: Map[Int, Node]): Boolean = true
-  def then(next: Node): Node = throw new IllegalStateException("Nil node cannot precede anything")
+  def setNext(next: Node): Node = throw new IllegalStateException("Nil node cannot precede anything")
   def append(tail: Node): Node = tail match {
     case NilNode => NilNode
     case TerminalNode => TerminalNode
@@ -38,7 +38,7 @@ object NilNode extends Node {
 
 object TerminalNode extends Node {
   def accept(s: Seq[Set[Char]], openGroups: Seq[Group], closedGroups: Map[Int, Node]): Boolean = s.isEmpty
-  def then(next: Node) = throw new IllegalArgumentException("Cannot provide a next node to a TerminalNode")
+  def setNext(next: Node) = throw new IllegalArgumentException("Cannot provide a next node to a TerminalNode")
   def append(tail: Node): Node = tail match {
     case NilNode => TerminalNode
     case TerminalNode => TerminalNode
@@ -55,8 +55,8 @@ class LiteralNode(chars: Set[Char], inverted: Boolean, next: Node) extends Node 
       case Nil => false
     }
   }
-  def then(next: Node): Node = new LiteralNode(chars,inverted, next)
-  def append(tail: Node): Node = this then next.append(tail)
+  def setNext(next: Node): Node = new LiteralNode(chars,inverted, next)
+  def append(tail: Node): Node = this setNext next.append(tail)
 }
 
 object LiteralNode {
@@ -71,8 +71,8 @@ class WildcardNode(next: Node) extends Node {
     if (s.isEmpty) false else next.accept(s.tail, openGroups.map{_.append(s.head)}, closedGroups)
   }
 
-  def then(next: Node): Node = new WildcardNode(next)
-  def append(tail: Node): Node = this then next.append(tail)
+  def setNext(next: Node): Node = new WildcardNode(next)
+  def append(tail: Node): Node = this setNext next.append(tail)
 }
 
 object WildcardNode {
@@ -91,8 +91,8 @@ class RepeatNode(self: Node, next: Node, min: Int, max: Option[Int]) extends Nod
     }
   }
 
-  def then(next: Node): Node = new RepeatNode(self, next, min, max)
-  def append(tail: Node): Node = this then next.append(tail)
+  def setNext(next: Node): Node = new RepeatNode(self, next, min, max)
+  def append(tail: Node): Node = this setNext next.append(tail)
   def selfAccepted(): Node = new RepeatNode(self, next, min-1, max.map{_-1})
 }
 
@@ -110,9 +110,9 @@ class OrNode(nodes: Seq[Node], next: Node) extends Node {
     }.dropWhile{!_}.isEmpty
   }
 
-  def then(next: Node): Node = new OrNode(nodes, next)
+  def setNext(next: Node): Node = new OrNode(nodes, next)
   override def or(node: Node): OrNode = new OrNode(node +: nodes, next)
-  def append(tail: Node): Node = this then next.append(tail)
+  def append(tail: Node): Node = this setNext next.append(tail)
 }
 
 object OrNode {
@@ -125,8 +125,8 @@ class BackrefNode(group: Int, next: Node) extends Node{
     closedGroups.getOrElse(group, PassNode()).append(next).accept(s, openGroups, closedGroups)
   }
 
-  def then(next: Node): Node = new BackrefNode(group, next)
-  def append(tail: Node): Node = this then next.append(tail)
+  def setNext(next: Node): Node = new BackrefNode(group, next)
+  def append(tail: Node): Node = this setNext next.append(tail)
 }
 
 object BackrefNode {
@@ -138,8 +138,8 @@ class OpenGroupNode(group: Int, next: Node) extends Node {
     next.accept(s, Group(group) +: openGroups, closedGroupMatchers)
   }
 
-  def then(next: Node): Node = new OpenGroupNode(group, next)
-  def append(tail: Node): Node = this then next.append(tail)
+  def setNext(next: Node): Node = new OpenGroupNode(group, next)
+  def append(tail: Node): Node = this setNext next.append(tail)
 }
 
 object OpenGroupNode {
@@ -152,8 +152,8 @@ class CloseGroupNode(next: Node) extends Node {
     next.accept(s, openGroups.tail, closedGroupMatchers + (closingGroup.id -> closingGroup.toNode))
   }
 
-  def then(next: Node): Node = new CloseGroupNode(next)
-  def append(tail: Node): Node = this then next.append(tail)
+  def setNext(next: Node): Node = new CloseGroupNode(next)
+  def append(tail: Node): Node = this setNext next.append(tail)
 }
 
 object CloseGroupNode {
@@ -165,8 +165,8 @@ class PassNode(next: Node) extends Node {
     next.accept(s, openGroups, closedGroupMatchers)
   }
 
-  def then(next: Node): Node = new PassNode(next)
-  def append(tail: Node): Node = this then next.append(tail)
+  def setNext(next: Node): Node = new PassNode(next)
+  def append(tail: Node): Node = this setNext next.append(tail)
 }
 
 object PassNode {
