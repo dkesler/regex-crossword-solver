@@ -17,3 +17,10 @@ project/plugins/project/
 .worksheet
 .idea/
 *.iml
+out/*
+
+#gradle files
+.gradle
+build/*
+*.ipr
+*.iws

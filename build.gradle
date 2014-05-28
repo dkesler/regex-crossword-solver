@@ -1,0 +1,11 @@
+apply plugin: 'scala'
+apply plugin: 'idea'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.10.3'
+    testCompile 'org.scalatest:scalatest_2.10:2.1.6'
+}

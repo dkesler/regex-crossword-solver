@@ -2,7 +2,7 @@ import java.io.File
 
 object RegexCrosswordSolver extends App {
   override def main(args: Array[String]): Unit = {
-    val crossword = PuzzleReader.read(new File("main/puzzles/regexcrossword/intermediate-5.dat"))
+    val crossword = PuzzleReader.read(new File("src/main/resources/puzzles/regexcrossword/intermediate-5.dat"))
     val sol = crossword.solve()
 
     sol match {
