@@ -1,0 +1,10 @@
+2 2
+
+.*M?O.*
+(AN|FE|BE)
+
+(A|B|C)\1
+(AB|OE|SK)
+
+BO
+BE

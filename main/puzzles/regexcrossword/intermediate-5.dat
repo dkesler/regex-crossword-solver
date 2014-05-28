@@ -1,0 +1,15 @@
+3 4
+
+[RUNT]*
+O.*[HAT]
+(.)*DO\1
+
+[^NRU](NO|ON)
+(D|FU|UF)+
+(FO|A|R)*
+(N|A)*
+
+TURN
+OFFA
+NDON
+

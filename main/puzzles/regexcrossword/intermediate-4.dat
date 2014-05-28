@@ -1,0 +1,13 @@
+3 3
+
+[DEF][MNO]*
+[^DJNU]P[ABC]
+[ICAN]*
+
+[JUNDT]*
+APA|OPI|OLK
+(NA|FE|HE)[CV]
+
+DON
+TPA
+NIC

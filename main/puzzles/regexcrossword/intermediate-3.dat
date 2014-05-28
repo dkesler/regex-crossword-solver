@@ -1,0 +1,13 @@
+3 3
+
+CAT|FOR|FAT
+RY|TY\-
+[TOWEL]*
+
+.(.)\1
+.*[WAY]+
+[RAM].[OH]
+
+FOR
+TY-
+TWO
