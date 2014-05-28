@@ -1,7 +1,10 @@
 package regex
 
 import org.scalatest.FunSuite
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class ParserParseTests extends FunSuite {
   def parseTest(pattern: String) = {
     assert(Parser.parse(pattern).toString === pattern)

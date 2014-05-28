@@ -1,7 +1,10 @@
 package regex
 
 import org.scalatest.FunSuite
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class NodeTests extends FunSuite {
 
   test("nil node should accept a blank string") {

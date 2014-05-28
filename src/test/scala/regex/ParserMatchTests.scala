@@ -1,7 +1,10 @@
 package regex
 
 import org.scalatest.FunSuite
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class ParserMatchTests extends FunSuite {
 
   def doTest(pattern: String, matching: List[List[Set[Char]]], notMatching: List[List[Set[Char]]]) {
